@@ -42,6 +42,7 @@ def getUserProfile(request):
 @api_view(['POST'])
 def registerUser(request):
     data = request.data
+    print(data)
     user = User.objects.create(
         first_name=data['name'],
         username= data['email'],
@@ -61,6 +62,8 @@ def getUsers(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def getProducts(request):
     products = Product.objects.all()
     serializer = ProductSerializer(products, many=True) 
