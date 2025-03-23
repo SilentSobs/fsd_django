@@ -1,40 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import ProductCard from '../components/ProductCard'; 
-import axios from 'axios';
-import Cookies from 'js-cookie';  
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ProductCard from '../components/ProductCard';
+import { listProducts } from '../actions/productActions';
 
 const HomeScreen = () => {
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        async function fetchProduct() {
-            try {
-                const token = Cookies.get('access_token'); 
-                console.log("Access Token:", token);
-
-                const { data } = await axios.get('http://127.0.0.1:8000/api/products', {
-                    headers: {
-                        Authorization: `Bearer ${token}`, 
-                    },
-                });
-
-                console.log(data);
-                setProducts(data);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            }
-        }
-
-        fetchProduct();
-    }, []);
-
-    return (
+  const dispatch = useDispatch();
+  const productList = useSelector(state => state.productList);
+  const { loading, error, products } = productList;
+  
+  useEffect(() => {
+    dispatch(listProducts());
+  }, [dispatch]);
+  
+  return (
+    <>
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>{error}</div>
+      ) : (
         <div className="row">
-            {products.map((product) => (
-                <ProductCard key={product._id} product={product} />
-            ))}
+          {products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
         </div>
-    );
+      )}
+    </>
+  );
 };
 
 export default HomeScreen;

@@ -63,7 +63,6 @@ def getUsers(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated]) 
 def getProducts(request):
     products = Product.objects.all()
     serializer = ProductSerializer(products, many=True) 
