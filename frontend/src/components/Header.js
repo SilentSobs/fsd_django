@@ -39,6 +39,7 @@ function BasicExample() {
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/cart">Cart</Nav.Link>
+            <Nav.Link href="/product-add">Add Product</Nav.Link>
             
             {userInfo ? (
               <NavDropdown title={username} id='username'>

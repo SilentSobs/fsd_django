@@ -8,6 +8,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from rest_framework import status
+
 
 
 
@@ -75,3 +77,31 @@ def getProduct(request, pk):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+def addProduct(request):
+    if request.method == 'POST':
+
+        print("Request Data:", request.data)
+
+
+        data = request.data
+
+
+        serializer = ProductSerializer(data=data)
+
+
+        if serializer.is_valid():
+
+            if not request.user.is_authenticated:
+
+                product = serializer.save(user=None)  
+            else:
+
+                product = serializer.save(user=request.user)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+        print("Validation Errors:", serializer.errors)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

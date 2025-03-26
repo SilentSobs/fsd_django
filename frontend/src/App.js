@@ -7,6 +7,7 @@ import SingleProduct from './components/SingleProduct';
 import LoginScreen from './screens/LoginScreen';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode'; 
+import AddProduct from './components/AddProduct';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,6 +41,7 @@ function App() {
             <Route path="/" element={<HomeScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="product/:id" element={<SingleProduct />} />
+            <Route path="product-add" element={< AddProduct />} />
           </Routes>
         </main>
         <Footer />
