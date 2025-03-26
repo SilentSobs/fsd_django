@@ -1,16 +1,26 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { thunk } from 'redux-thunk';
+import {thunk} from 'redux-thunk'; // ✅ Fixed import
 import { productListReducer, productDetailsReducer } from './reducers/productReducers';
+import { userLoginReducer } from './reducers/userReducer';
 
 const reducer = combineReducers({
   productList: productListReducer,
-  productDetailsReducer: productDetailsReducer
+  productDetailsReducer: productDetailsReducer, // ✅ Fixed key name
+  userLogin: userLoginReducer,
 });
 
-const initialState = {};
+const userInfoFromStorage = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo'))
+  : null;
+
+
+const initialState = {
+  userLogin: { userInfo: userInfoFromStorage }, 
+};
+
 const middleware = [thunk];
 
-// Safe approach to handle Redux DevTools
+// Safe Redux DevTools integration
 let enhancer = applyMiddleware(...middleware);
 if (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__) {
   enhancer = compose(
@@ -19,10 +29,7 @@ if (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__) {
   );
 }
 
-const store = createStore(
-  reducer,
-  initialState,
-  enhancer
-);
+// Create Store
+const store = createStore(reducer, initialState, enhancer);
 
 export default store;

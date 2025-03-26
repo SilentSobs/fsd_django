@@ -1,50 +1,42 @@
-import React, { useState } from "react";
-import Cookies from 'js-cookie';  // Import js-cookie
-
-
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { login } from "../actions/userActions";  
+
 const Login = () => {
-    const navigate = useNavigate();  
-    
-    const [username, setEmail] = useState("");
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        const loginData = {
-            username: username,
-            password: password,
-        };
-    
-        
-        try {
-            const response = await axios.post("http://127.0.0.1:8000/api/users/login/", loginData);
-            
-            const {access,refresh} = response.data
-            Cookies.set('access_token', access, { expires: 7, secure: true, sameSite: 'Strict' });  // Expires in 7 days
-            Cookies.set('refresh_token', refresh, { expires: 7, secure: true, sameSite: 'Strict' });
-            console.log(response.data);
-            
-            navigate('/');
-        } catch (error) {
-            console.error("There was an error logging in:", error);
-        }
-    
-        console.log("Logging in with:", username, password);
-    };
+    // Access userLogin state from Redux
+    const userLogin = useSelector((state) => state.userLogin);
+    const { userInfo, error } = userLogin;
 
+    useEffect(() => {
+        // Redirect user if already logged in
+        if (userInfo) {
+            navigate("/");
+        }
+    }, [userInfo, navigate]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(login(username, password));  
+    };
 
     return (
         <div>
             <h2>Login</h2>
+            {error && <p style={{ color: "red" }}>{error}</p>} 
             <form onSubmit={handleSubmit}>
                 <label htmlFor="username">Username:</label>
                 <input
                     type="text"
                     value={username}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     id="username"
                     name="username"
                     required
